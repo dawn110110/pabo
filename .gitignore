@@ -1,3 +1,4 @@
 *.py[cod]
 .svn
 .ropeproject
+*.wsgic
