@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html>
+<head>
+{% set site_info = site_info() %}
+    <meta charset="utf-8">
+    <meta name="keywords" content="{{ site_info.keywords }}">
+    <meta name="description" content="{{ site_info.description }}">
+    <link rel="shortcut icon" href="{{ static_url('img/favicon.ico') }}">
+
+    {% if settings.DEBUG %}
+    <link rel="stylesheet" href="{{ static_url('libs/bootstrap/bootstrap.css') }}">
+    {% else %}{# 使用sae的cdn #}
+    <link rel="stylesheet" href="//lib.sinaapp.com/js/bootstrap/2.3.1/css/bootstrap.min.css">
+    {% endif %}
+
+    {% block css %}{% endblock %}
+
+    <link rel="stylesheet" href="{{ normal_static('css/style.css') }}">
+    <title>{% block title %}{% endblock %} - {{ site_info.title }}</title>
+</head>
+<body>
+<header id="top-header">
+{% block header %}
+    {% set navs = site_info.navs[:] %}
+    {% if loggedin %}
+        {% do navs.extend([
+            {'link': site_info.admin.default, 'label': '后台'},
+            {'link': '/logout', 'label': '登出'}
+        ]) %}
+    {% elif site_info.show_login %}
+        {% do navs.append({'link': site_info.login_url, 'label': '登录'}) %}
+    {% endif %}
+    <ul>
+        {% for nav in navs %}
+
+        {% set path = request.path %}
+        {% if path.startswith('/page/') %}
+        {% set path = '/' %}
+        {% elif path.startswith('/archives/')%}
+        {% set path = '/archives' %}
+        {% endif %}
+
+        {% set active = ' class="active"' if path == nav.link else ''%}
+        <li{{ active }}><a href="{{ nav.link }}">{{ nav.label }}</a></li>
+        {% endfor %}
+    </ul>
+    <h1 title="首页"><a href="/">{{ site_info.title }}</a></h1>
+{% endblock %}
+</header>
+<div id="content">
+    {% block content %}{% endblock %}
+</div>
+<footer>
+    {% block footer %}{% endblock %}
+</footer>
+{% if not settings.DEBUG %}
+{# 百度统计 #}
+{{ site_info.baidu_statistics }}
+{% endif %}
+
+{% if settings.DEBUG %}
+<script src="{{ static_url('libs/jquery.js') }}"></script>
+{% else %}
+<script src="//lib.sinaapp.com/js/jquery/2.0.2/jquery-2.0.2.min.js"></script>
+{% endif %}
+
+{% block libs %}{% endblock %}
+
+<script>
+$(function(){
+    prettyPrint();
+    $('p:has(img), p:has(iframe), p:has(embed)', '#content').add($('iframe').wrap('p').parent()).css({
+        'text-align': 'center',
+        'margin-top': '20px',
+        'margin-bottom': '20px'
+    });
+    {# 为所有的图片加上a标签 #}
+    $('p>img', '#content').wrap('<a class="img" title="查看原图" target="_blank"></a>').each(function(i, v){
+        var $img = $(v);
+        $img.parent().attr('href', $img.attr('src'));
+    });
+});
+</script>
+{% block js %}{% endblock %}
+</body>
+</html>

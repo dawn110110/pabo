@@ -1,0 +1,33 @@
+{% extends 'admin_base.html' %}
+{% import 'admin_widgets.html' as widgets %}
+
+
+{% block title %}文章管理{% endblock %}
+
+
+{% block css %}
+<style>
+.article .widget-content {
+    height: 350px;
+    overflow-x: auto;
+}
+
+.l0 {
+    margin: 150px;
+    text-align: center;
+}
+.pagination {
+    text-align: center;
+}
+</style>
+{% endblock %}
+
+
+{% block js %}
+<script src="{{ admin_static('js/manage_article.js') }}"></script>
+{% endblock %}
+
+
+{% block content %}
+{{ widgets.manage_articles(articles, cur_num, total_num) }}
+{% endblock %}

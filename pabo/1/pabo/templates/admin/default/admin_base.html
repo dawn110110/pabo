@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html>
+<head>
+{% set site_info = site_info() %}
+{% set admin = site_info.admin %}
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="shortcut icon" href="{{ static_url('img/favicon.ico') }}">
+
+    {% if settings.DEBUG %}
+    <link rel="stylesheet" href="{{ static_url('libs/bootstrap/bootstrap.css') }}">
+    <link rel="stylesheet" href="{{ static_url('libs/bootstrap/bootstrap-responsive.css') }}">
+    {% else %}{# 使用sae的cdn #}
+    <link rel="stylesheet" href="//lib.sinaapp.com/js/bootstrap/2.3.1/css/bootstrap.min.css">
+    <link rel="stylesheet" href="//lib.sinaapp.com/js/bootstrap/2.3.1/css/bootstrap-responsive.min.css">
+    {% endif %}
+    <link rel="stylesheet" href="{{ static_url('libs/fontawesome/fontawesome.css') }}">
+    <link rel="stylesheet" href="{{ static_url('libs/jquery.gritter/gritter.css') }}">
+
+    <link rel="stylesheet" href="{{ admin_static('css/grey.css') }}">
+    {% block css %}{% endblock %}
+    <title>{% block title %}{% endblock %} - Pabo后台管理</title>
+</head>
+<body>
+<header>
+<div id="header">
+    <h1><a href="{{ admin.default }}">Pabo Admin</a></h1>
+</div>
+<form id="search">
+    <input name="q" type="text" placeholder="搜索..."><button type="submit"><i class="icon-search icon-white"></i></button>
+</form>
+
+<nav id="user-nav" class="navbar navbar-inverse">
+    <ul class="nav btn-group">
+        <li class="btn btn-inverse"><a href="/">
+            <i class="icon icon-white icon-home"></i> <span class="text">回博客首页</span>
+        </a></li>
+        <li class="btn btn-inverse"><a href="/logout">
+            <i class="icon icon-white icon-off"></i> <span class="text">登出</span>
+        </a></li>
+    </ul>
+</nav>
+</header>
+
+<aside id="sidebar">
+<a href="#" class="visible-phone"><i class="icon icon-white icon-home"></i> 概览</a>
+<ul>
+{% set cur_nav = [] %}
+{% for nav in admin.navs %}
+{% if request.path == nav.link %}
+    {% set cls = ' class="active"' %}
+    {% do cur_nav.append(nav) %}
+{% else %}
+    {% set cls = '' %}
+{% endif %}
+{% if nav.sub %}
+{% set open_cls = ' open' if 'article' in request.path else '' %}
+<li class="submenu{{ open_cls }}">
+    <a href="#">
+        <i class="icon icon-white icon-{{ nav.icon }}"></i> <span>{{ nav.label }}</span>
+        <span class="label">2</span>
+    </a>
+    <ul>
+        {% for sub in nav.sub %}
+        {% if request.path == sub.link %}
+            {% set cls = ' class="active"' %}
+            {% do cur_nav.append(sub) %}
+            {% do cur_nav.append(nav.label) %}
+        {% else %}
+            {% set cls = '' %}
+        {% endif %}
+        <li{{ cls }}><a href="{{ sub.link }}">{{ sub.label }}</a></li>
+        {% endfor %}
+    </ul>
+</li>
+{% else %}
+<li{{ cls }}><a href="{{ nav.link }}">
+    <i class="icon icon-white icon-{{ nav.icon }}"></i> <span>{{ nav.label }}</span>
+</a></li>
+{% endif %}
+{% endfor %}
+</ul>
+</aside>
+
+<div id="content">
+    <div id="content-header">
+        <h1>{{ cur_nav[0].label }}</h1>
+    </div>
+    <div id="breadcrumb">
+        <a><i class="icon-home"></i> 后台</a>
+        {% if len(cur_nav) == 2 %}
+        <a>{{ cur_nav[1] }}</a>
+        {% endif %}
+        <a class="current">{{ cur_nav[0].label }}</a>
+    </div>
+    {% block content %}{% endblock %}
+    <footer>
+        <div class="row-fluid">
+            <div id="footer" class="span12">
+                2013 &copy; Pabo Admin.
+            </div>
+        </div>
+        {% block footer %}{% endblock %}
+    </footer>
+</div>
+{% if settings.DEBUG %}
+<script src="{{ static_url('libs/jquery.js') }}"></script>
+<script src="{{ static_url('libs/jquery-ui.js') }}"></script>
+<script src="{{ static_url('libs/bootstrap/bootstrap.js') }}"></script>
+{% else %}
+<script src="//lib.sinaapp.com/js/jquery/2.0.2/jquery-2.0.2.min.js"></script>
+<script src="//lib.sinaapp.com/js/jquery-ui/1.9.2/jquery-ui.min.js"></script>
+<script src="//lib.sinaapp.com/js/bootstrap/2.3.1/js/bootstrap.min.js"></script>
+{% endif %}
+<script src="{{ static_url('libs/jquery.gritter/gritter.js') }}"></script>
+
+{% block libs %}{% endblock %}
+
+<script src="{{ admin_static('js/base.js') }}"></script>
+{% block js %}{% endblock %}
+</body>
+</html>

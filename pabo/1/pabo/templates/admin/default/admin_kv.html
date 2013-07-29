@@ -1,0 +1,66 @@
+{% extends "admin_base.html" %}
+
+
+{% block title %}KVDB管理{% endblock %}
+
+
+{% macro human(num) %}
+{% set num = num|float %}
+{% if num >= 1024 ** 3 %}
+{% set unit = 'Gb' %}
+{% set num = num / 1024 ** 3 %}
+{% elif num >= 1024 ** 2 %}
+{% set unit = 'Mb' %}
+{% set num = num / 1024 ** 2 %}
+{% elif num >= 1024 %}
+{% set unit = 'Kb' %}
+{% set num = num / 1024 %}
+{% else %}
+{% set unit = 'b' %}
+{% endif %}
+{% set num = '%.1f' % num %}
+{{ num ~ unit }}
+{% endmacro %}
+
+
+{% macro one(num, label) %}
+<li><h4>{{ num }}</h4><span>{{ label}}</span></li>
+{% endmacro %}
+
+
+{% block content %}
+<div class="container-fluid">
+    <div class="row-fluid">
+        <div class="span12">
+            <div class="widget-box widget-plain">
+                <div class="widget-content center">
+                    <ul class="stats-plain">
+                    {{ one(human(info['outbytes']), '流出流量') }}
+                    {{ one(human(info['inbytes']), '流入流量') }}
+                    {{ one(human(info['total_size']), '总大小') }}
+                    {{ one(info['total_count'], '键总个数') }}
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row-fluid">
+        <div class="span12">
+            <div class="widget-box">
+                <div class="widget-title">
+                    <span class="icon">
+                        <i class="icon-search"></i>
+                    </span>
+                    <h5>kvdb查询</h5>
+                </div>
+                <div class="widget-content">
+                    <form action="/admin.kv.searchprefix.json" method="post">
+                        <input style="margin-bottom: 0;" type="text" name="prefix" placeholder="输入key的前缀, 如site:info">
+                        <input type="submit" class="btn btn-primary" value="搜索">
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

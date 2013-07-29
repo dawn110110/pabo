@@ -1,0 +1,89 @@
+{% extends 'admin_base.html' %}
+{% import 'admin_widgets.html' as widgets %}
+
+
+{% block title %}附件管理{% endblock %}
+
+
+{% block css %}
+<style>
+input[name="name"] {
+    margin-bottom: 0;
+    min-width: 300px;
+}
+.thumbnail img {
+    width: 160px;
+    height: 120px;
+}
+.center {
+    text-align: center;
+}
+.center a {
+    font-size: 18px;
+}
+.copy.clip-hover {
+    color: #005580;
+}
+#img-search-result {
+    margin: 10px;
+}
+</style>
+{% endblock %}
+
+
+{% block libs %}
+<script src="{{ static_url('libs/zeroclipboard/zeroclipboard.js') }}"></script>
+{% endblock %}
+
+
+{% block js %}
+<script src="{{ admin_static('js/attachments.js') }}"></script>
+{% endblock %}
+
+
+{% block content %}
+<div class="container-fluid" data-swf="{{ static_url('libs/zeroclipboard/zeroclipboard.swf') }}">
+    <div class="row-fluid">
+        <div class="span12">
+            <div class="widget-box">
+                <div class="widget-title">
+                    <span class="icon">
+                        <i class="icon-search"></i>
+                    </span>
+                    <h5>图片搜索</h5>
+                </div>
+                <div class="widget-content center">
+                    <form onsubmit="return false;">
+                        <input name="name" type="text" autofocus placeholder="62a1c540c1fa965e2e6a96c0638519c4.jpg">
+                        <input type="submit" class="btn btn-primary" id="img-search" value="搜索">
+                        <div class="center hide" id="img-search-result">
+                            <a class="tip-top thumbnail" title="点击查看大图" target="_blank"><img></a>
+                            <a class="del" title="删除图片" href="#"><i class="icon-trash icon-white"></i></a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row-fluid">
+        <div class="span12">
+            <div class="widget-box">
+                <div class="widget-title">
+                    <span class="icon">
+                        <i class="icon-picture"></i>
+                    </span>
+                    <h5>图片管理</h5>
+                </div>
+                <div class="widget-content">
+                    {% if imgs|length == 0 %}
+                    <div>还没有任何图片 <a class="btn btn-info" href="/admin/article/add">去上传 <i class="icon-arrow-right"></i></a></div>
+                    {% else %}
+                    {{ widgets.imgs_wall(imgs) }}
+                    <div class="view-more">+ 显示更多 +</div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

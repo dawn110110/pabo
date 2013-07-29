@@ -1,0 +1,98 @@
+{% extends "admin_base.html" %}
+
+
+{% block css %}
+<style>
+{% set show_iframe = site_info.links_preview %}
+{% if show_iframe %}
+iframe {
+    height: 85%;
+    width: 100%;
+}
+.widget-content:not(.noiframe) {
+    height: 500px;
+}
+{% endif %}
+form input[type="text"] {
+    margin-bottom: 0;
+}
+@media(min-width: 670px) {
+    form {
+        text-align: center;
+    }
+}
+</style>
+{% endblock %}
+
+
+{% block title %}友链管理{% endblock %}
+
+
+{% block libs %}
+<script src="{{ static_url('libs/jquery.validate.js') }}"></script>
+{% endblock %}
+
+
+{% block js %}
+<script src="{{ admin_static('js/friends.js') }}"></script>
+{% endblock %}
+
+
+{% block content %}
+{% set show_iframe = site_info.links_preview %}
+<div class="container-fluid">
+<div class="row-fluid">
+    <div class="span12">
+        <div class="widget-box">
+            <div class="widget-title">
+                <span class="icon"><i class="icon-plus"></i></span>
+                <h5>添加友链</h5>
+            </div>
+            <div class="widget-content noiframe">
+                <form action="/admin.add.link.json" method="post" id="form-add">
+                    <div class="control-group">
+                        <div class="controls">
+                            <input type="text" name="name" autofocus placeholder="名称">
+                            <input type="text" name="link" placeholder="网址">
+                            <button type="submit" class="btn btn-primary"><i class="icon-plus"></i> 加上去</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% for link, title in site_info.links.iteritems() %}
+<div class="row-fluid">
+    <div class="span12 link">
+        <div class="widget-box">
+            <div class="widget-title">
+                <span class="icon"><i class="icon-link"></i></span>
+                <h5 class="tip-right" title="前往 {{ link }}">
+                    <a href="{{ link }}" target="_blank">
+                        <span>{{ title|truncate(18, True) }}</span>
+                        <i class="icon-external-link"></i>
+                    </a>
+                </h5>
+            </div>
+            <div class="widget-content">
+                <form action="/admin.mod.link.json" method="post" id="form-mod{{ loop.index }}">
+                    <div class="control-group">
+                        <div class="controls">
+                            <input type="text" name="name" value="{{ title }}">
+                            <input type="text" name="link" value="{{ link }}">
+                            <input type="hidden" name="raw" value="{{ link }}">
+                            <button type="submit" class="btn btn-primary tip-bottom" title="保存友链"><i class="icon-save"></i></button>
+                            <a class="btn del tip-bottom" title="删除友链"><i class="icon-trash"></i></a>
+                        </div>
+                    </div>
+                </form>
+                {% if show_iframe %}
+                <iframe src="{{ link }}" frameborder="0"></iframe>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endfor %}
+{% endblock %}

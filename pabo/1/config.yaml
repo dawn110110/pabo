@@ -1,0 +1,12 @@
+---
+name: pabo
+version: 1
+
+worker: tornado
+
+cron:
+- description: 每天早上3:30备份kvdb到storage中
+  url: cron/kvdbbackup
+  schedule: every day of month 03:30
+
+...

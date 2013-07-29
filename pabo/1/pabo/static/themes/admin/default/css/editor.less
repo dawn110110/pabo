@@ -1,0 +1,78 @@
+@import "../../../../libs/prettify/prettify.less";
+
+html * {
+    font-family: "微软雅黑", arial, "\5b8b\4f53", sans-serif;
+    -webkit-text-size-adjust: none;
+}
+
+html, body {
+    padding-top: 0;
+}
+
+.border() {
+    webkit-border-radius: 4px;
+    -moz-border-radius: 4px;
+    border-radius: 4px;
+    -webkit-box-shadow: 0 0 80px rgba(0,0,0,0.3),inset 0 0 5px rgba(0,0,0,0.6);
+    -moz-box-shadow: 0 0 80px rgba(0,0,0,0.3),inset 0 0 5px rgba(0,0,0,0.6);
+    box-shadow: 0 0 80px rgba(0,0,0,0.3),inset 0 0 5px rgba(0,0,0,0.6);
+}
+
+textarea {
+    min-height: 28px;
+    display: block;
+    width: 100%;
+    -moz-box-sizing: border-box;
+    -webkit-box-sizing: border-box;
+    box-sizing: border-box;
+    resize: none;
+    padding: 10px 10px 20px;
+    overflow: hidden;
+    height: 2048px;
+}
+
+#content {
+    font-size: 13px;
+    position: fixed;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+}
+
+@top: 10px;
+
+#editor {
+    position: absolute;
+    margin-right: 5px;
+    top: @top;
+    left: 10px;
+    bottom: 10px;
+    right: 50%;
+    display: block;
+    .border;
+}
+
+pre {
+    white-space: pre;
+}
+
+#preview {
+    position: absolute;
+    margin-left: 5px;
+    padding: 10px;
+    left: 50%;
+    bottom: 10px;
+    right: 10px;
+    top: @top;
+    overflow: auto;
+    margin: 0 auto;
+    .border;
+}
+
+blockquote {
+    border-left: 5px solid #ddd;
+    p {
+        font-size: 13px;
+    }
+}

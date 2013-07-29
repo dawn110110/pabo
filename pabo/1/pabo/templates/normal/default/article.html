@@ -1,0 +1,42 @@
+{% extends 'base.html' %}
+
+
+{% set meta = article.meta %}
+
+
+{% block title %}{{ meta.title }}{% endblock %}
+
+
+{% block css %}
+<link rel="stylesheet" href="{{ static_url('libs/prettify/prettify.css') }}">
+{% endblock %}
+
+
+{% block libs %}
+<script src="{{ static_url('libs/prettify/prettify.js') }}"></script>
+{% endblock %}
+
+
+{% block content %}
+{% set author = site_info.author %}
+<div class="container-fluid" id="article">
+    <div class="row-fluid article">
+        <div class="span12">
+            <article>
+                <h3>{{ meta.title }}</h3>
+                <div class="meta">
+                    <time datetime="{{ meta.datetime }}">{{ meta.datetime }}</time>
+                    <p>{{ article.cls_name }}</p>
+                </div>
+                <div class="content">{{ article.html }}</div>
+            </article>
+        </div>
+    </div>
+    <div id="home-footer">
+        <div class="author">
+            <p>AUTHOR &copy;{{ author.name }}</p>
+            <p>THEME BY SHUJI</p>
+        </div>
+    </div>
+</div>
+{% endblock %}

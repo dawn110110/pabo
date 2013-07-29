@@ -1,0 +1,62 @@
+{% extends 'base.html' %}
+
+
+{% block title %}文章归档{% endblock %}
+
+
+{% block css %}
+<link rel="stylesheet" href="{{ static_url('libs/prettify/prettify.css') }}">
+{% endblock %}
+
+
+{% block libs %}
+<script src="{{ static_url('libs/prettify/prettify.js') }}"></script>
+{% endblock %}
+
+
+{% block content %}
+<div class="container-fluid" id="archives">
+    {% if classes %}
+    {# 归档首页 #}
+    <div class="row-fluid classes">
+        <div class="span12">
+            <h2>分类归档</h2>
+            <ul>
+                {% for cls in classes %}
+                <li><a href="/archives/{{ cls.cid }}/page/1">{{ cls.name }}</a> ({{ cls.num }})</li>
+                {% endfor %}
+            </ul>
+        </div>
+    </div>
+    {% else %}
+    {# 归档分类单页 #}
+    {% set num = [0] %}
+    {% for article in articles %}
+    {% do num.append(num[-1] + 1) %}
+    {% set meta = article.meta %}
+    <div class="row-fluid article">
+        <div class="span12">
+        {% set href = '/article/' ~ article.url %}
+            <h3><a target="_blank" href="{{ href }}">{{ meta.title }}</a></h3>
+            <div class="meta">
+                <time datetime="{{ meta.datetime }}">{{ meta.datetime }}</time>
+                <p>{{ article.cls_name }}</p>
+            </div>
+            <div class="abstract">{{ article.abs }}</div>
+            <p class="read-more"><a target="_blank" href="{{ href }}">阅读全文 >>></a></p>
+        </div>
+    </div>
+    {% endfor %}
+    {% endif %}
+    {% set author = site_info.author %}
+    <div id="home-footer">
+        {% if num and num[-1] == app %}
+        <h2><a href="/archives/{{ cid }}/page/{{ page_num + 1}}">更多</a></h2>
+        {% endif %}
+        <div class="author">
+            <p>AUTHOR &copy;{{ author.name }}</p>
+            <p>THEME BY SHUJI</p>
+        </div>
+    </div>
+</div>
+{% endblock %}

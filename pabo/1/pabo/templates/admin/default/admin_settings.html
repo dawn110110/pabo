@@ -1,0 +1,146 @@
+{% extends 'admin_base.html' %}
+{% import 'admin_widgets.html' as widgets %}
+
+
+{% block title %}设置{% endblock %}
+
+
+{% block css %}
+<link rel="stylesheet" href="{{ static_url('libs/select2/select2.css') }}">
+<link rel="stylesheet" href="{{ static_url('libs/bootstrap-switch/switch.css') }}">
+{% endblock %}
+
+
+{% block libs %}
+<script src="{{ static_url('libs/jquery.validate.js') }}"></script>
+<script src="{{ static_url('libs/select2/select2.js') }}"></script>
+<script src="{{ static_url('libs/bootstrap-switch/switch.js') }}"></script>
+{% endblock %}
+
+
+{% block js %}
+<script src="{{ admin_static('js/settings.js') }}"></script>
+{% endblock %}
+
+
+{% macro textarea(label, rows=5, value=None, name=None, help=None) %}
+<div class="control-group">
+    <label class="control-label">{{ label }}</label>
+    <div class="controls">
+        <textarea rows="{{ rows }}" {% if value != None %}{% endif %} name="{{ name }}">{{ value }}</textarea>
+        {% if help != None %}<p class="help-block">{{ help }}</p>{% endif %}
+    </div>
+</div>
+{% endmacro %}
+
+
+{% macro input(label, type='text', value=None, name=None, help=None) %}
+<div class="control-group">
+    <label class="control-label">{{ label }}</label>
+    <div class="controls">
+        <input type="{{ type }}"{% if value != None %} value="{{ value }}"{% endif %} name="{{ name }}">
+        {% if help != None %}<p class="help-block">{{ help }}</p>{% endif %}
+    </div>
+</div>
+{% endmacro %}
+
+
+{% macro select(label, name, options, selected, help=None) %}
+<div class="control-group">
+    <label class="control-label">{{ label }}</label>
+    <div class="controls">
+        <select name="{{ name }}">
+            {% for value, label in options.iteritems() %}
+            {% set s = ' selected="selected"' if value == selected else '' %}
+            <option{{ s }} value="{{ value }}">{{ label }}</option>
+            {% endfor %}
+        </select>
+        {% if help != None %}<p class="help-block">{{ help }}</p>{% endif %}
+    </div>
+</div>
+{% endmacro %}
+
+
+{% macro checkbox(label, name, checked, on='是', off='否', on_color='success', off_color='warning', help=None) %}
+<div class="control-group">
+    <label class="control-label">{{ label }}</label>
+    <div class="controls">
+        <div class="switch" data-on="{{ on_color }}" data-off="{{ off_color }}" tabindex="0" data-on-label="{{ on }}" data-off-label="{{ off }}">
+            <input type="checkbox" name="{{ name }}"{% if checked %} checked{% endif %}>
+        </div>
+        {% if help != None %}<p class="help-block">{{ help }}</p>{% endif %}
+    </div>
+</div>
+{% endmacro %}
+
+
+{% macro title(h, icon) %}
+<div class="widget-title">
+    <span class="icon"><i class="icon-{{ icon }}"></i></span>
+    <h5>{{ h }}</h5>
+</div>
+{% endmacro %}
+
+
+{% macro save() %}
+<div class="form-actions">
+    <input type="submit" class="btn btn-primary" value="保存">
+</div>
+{% endmacro %}
+
+
+{% block content %}
+<div class="container-fluid">
+    <div class="row-fluid">
+        <div class="span12">
+            <div class="widget-box">
+                {{ title('管理员设置', 'key') }}
+                {% set info = get(settings.K_ADMIN_INFO) %}
+                <div class="widget-content nopadding">
+                    <form action="/admin.mod.admin.info.json" method="post" class="form-horizontal" id="form-admin-info-mod">
+                        {{ input('登录名称', 'text', info.name, 'name')}}
+                        {{ input('登录密码', 'password', name='pwd')}}
+                        {{ input('确认密码', 'password', name='confirm')}}
+                        {{ input('邮箱地址', 'email', info.email, 'email')}}
+                        {{ save() }}
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row-fluid">
+        <div class="span12">
+            <div class="widget-box">
+                {{ title('站点信息设置', 'sitemap') }}
+                {% set info = get(settings.K_SITE_INFO) %}
+                <div class="widget-content nopadding">
+                    <form action="/admin.mod.site.info.json" method="post" class="form-horizontal" id="form-site-info-mod">
+{{ input('登录地址', 'text', info.login_url, 'login_url', '必须是以/开头的合法的url，为安全起见，最好设置为一个别人不易猜测到的网址，如/cannot_be_guessed。默认为/login')
+}}
+{{ input('博客大标题', 'text', info.title, 'title') }}
+{{ input('博客副标题', 'text', info.subtitle, 'subtitle', '副标题可留空') }}
+{{ input('关键字', 'text', info.keywords, 'kw', '此字段用于搜索引擎.可留空') }}
+{{ input('描述', 'text', info.description, 'desc', '此字段用于搜索引擎.可留空') }}
+{{ select('前台主题', 'theme', themes, info.theme, '存放在templates/normal目录下的所有主题名') }}
+{{ select('后台主题', 'admin_theme', admin_themes, info.admin_theme , '存放在templates/admin目录下的所有主题名') }}
+{{ input('作者', 'text', info.author.name, 'author_name') }}
+{{ input('作者简介', 'text', info.author.intro, 'author_intro', '可留空') }}
+{{ input('每页文章数', 'text', info.app, 'app', '首页和归档页每页显示的文章数。默认为10') }}
+{{ checkbox('是否预览友链', 'links_preview', info.links_preview, help='后台友链管理是否预览友链, 友链较多时建议选择“否”。默认为否') }}
+{{ checkbox('是否显示登录链接', 'show_login', info.show_login, help='是否在博客前台显示“登录”链接.为安全起见，建议选择否，但是需要自己记住登录地址。默认为是') }}
+{{ checkbox('rss是否全文输出', 'rss_full', info.rss_full, help='默认为否') }}
+
+{# TODO: 网址类型字段, 一个可拖动顺序的插件? #}
+
+{{ textarea('百度统计代码', 8, info.baidu_statistics, 'baidu_statistics', '把百度统计代码复制到这里, 没有就留空') }}
+
+{{ select('后台默认页面', 'default_page', links, info.admin.default, '登录后台管理后，显示的页面。默认为概览') }}
+
+{{ save() }}
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

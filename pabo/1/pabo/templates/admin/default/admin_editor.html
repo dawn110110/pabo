@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title>
+    {% if article %}
+    《{{ article.meta.title }}》 - 修改文章
+    {% else %}
+    Markdown编辑器 - Pabo Blog
+    {% endif %}
+    </title>
+    {% if settings.DEBUG %}
+    <link rel="stylesheet" href="{{ static_url('libs/bootstrap/bootstrap.css') }}">
+    <link rel="stylesheet" href="{{ static_url('libs/bootstrap/bootstrap-responsive.css') }}">
+    {% else %}{# 使用sae的cdn #}
+    <link rel="stylesheet" href="//lib.sinaapp.com/js/bootstrap/2.3.1/css/bootstrap.min.css">
+    <link rel="stylesheet" href="//lib.sinaapp.com/js/bootstrap/2.3.1/css/bootstrap-responsive.min.css">
+    {% endif %}
+
+    <link rel="stylesheet" href="{{ static_url('libs/prettify/prettify.css') }}">
+    <link rel="stylesheet" href="{{ static_url('libs/fontawesome/fontawesome.css') }}">
+    <link rel="stylesheet" href="{{ static_url('libs/jquery.gritter/gritter.css') }}">
+    <link rel="stylesheet" href="{{ admin_static('css/editor.css') }}">
+    {% if article %}
+    <link rel="stylesheet" href="{{ static_url('libs/select2/select2.css') }}">
+    <style>
+    #editor, #preview {
+        top: 100px;
+    }
+    form {
+        margin-top: 10px;
+    }
+    input {
+        margin-bottom: 0 !important;
+    }
+    input[name="title"] {
+        min-width: 247px;
+    }
+    </style>
+    {% endif %}
+</head>
+
+{% import 'admin_widgets.html' as widgets %}
+
+<body>
+<div class="container-fluid" id="content">
+        {% if article %}
+        {% set meta = article.meta %}
+        <form action="/admin.mod.article.json" method="post">
+            <div class="control-group">
+                <div class="controls">
+                    标题: <input type="text" name="title" autofocus autocomplete="off" value="{{ meta.title }}">
+                </div>
+            </div>
+            <div class="control-group">
+                <div class="controls">
+                    分类: {{ widgets.classes_select(classes, article.cid) }}
+                    <a href="/admin/classes" title="添加分类" class="btn btn-mini tip-bottom" target="_blank"><i class="icon-plus"></i> 添加</a>
+                    <button type="submit" title="保存文章" class="btn btn-primary btn-mini tip-bottom"><i class="icon-save"></i> 保存</button>
+                </div>
+            </div>
+            <textarea name="md" class="hide"></textarea>
+            <input type="hidden" name="id" value="{{ article.aid }}">
+        </form>
+        {% endif %}
+    <div id="editor">
+        {% if article %}
+        <textarea id="textarea">{{ article.md }}</textarea>
+        {% else %}
+        <textarea>
+### Markdown写作语法说明
+
+3分钟教程。
+
+---
+
+#### 使用粗体
+
+---
+
+产生**加粗**效果。
+
+---
+
+#### 注释
+
+以&amp;lt;!--开头并以--&amp;gt;结尾的为注释，将不会显示在文章中。
+
+<!-- 这个是注释，将不会显示在文章中: 看右边产生的结果，不会包含这句话 -->
+
+---
+
+#### 摘要
+
+为了方便提取文章摘要，可在合适的地方插入&amp;lt;!--more--&amp;gt;注释(注意中间不要有空格)，位于此注释上面的所有内容将成为文章的摘要。否则程序将以全文做为摘要。
+
+<!--more-->
+
+---
+
+#### 换行
+
+---
+
+看下面有好多**空行**，但是最终只能产生一个**换行**。
+
+
+
+瞧，上面只产生了一个换行。
+
+下面的【1】和【2】之间没有**空行**所以不能产生的**换行**，而【3】和【4】就可以：
+
+【1】
+【2】
+
+【3】
+
+【4】
+
+看这里有好多空格                     ，但只能产生**一个**空格。
+
+**总结： 多个空行产生一个换行；多个换行产生一个空行。多个空格产生一个空格。**
+
+---
+
+#### 链接
+
+---
+
+超链要用尖括号括起来<https://www.google.com>
+
+为了美观推荐你这样写[谷歌](https://www.google.com)
+
+---
+
+#### 图片
+
+---
+
+插入图片的时候同链接类似，只要在前面加上英文的感叹号!就行了：
+
+![](/assets/img/404.png "鼠标放上去后显示的文字")
+
+---
+
+#### 视频
+
+---
+
+
+直接复制embed标签：
+
+<embed src="http://player.youku.com/player.php/sid/XNDU3MDU0ODY0/v.swf" allowFullScreen="true" quality="high" width="480" height="400" align="middle" allowScriptAccess="always" type="application/x-shockwave-flash"></embed>
+{#
+或者是iframe标签:
+
+<iframe height=498 width=510 src="http://player.youku.com/embed/XNDU3MDU0ODY0" frameborder=0 allowfullscreen></iframe>
+#}
+
+---
+
+#### 引用
+
+---
+
+如果你要引用他人的文字，在引用的每行前面加个>（大于符号），>的后面为了美观可以加个空格：
+> [百度百科](http://baike.baidu.com/view/2311114.htm):Markdown 是一种轻量级的标记语言，由John Gruber和Aaron Swartz创建，使其成为可读性最大并可再发行的可输入输出的格式。【这里如果要换行也要满足上面提到的规则】
+
+> 请注意上面要有一个空行，否则会像下面这样不产生换行，而只是一个空格。
+> 这个并不会换行。
+
+---
+
+#### 列表
+
+---
+
+##### 有序列表（请注意列表的第一行上面一行至少要有一个空行）：
+
+1. 项目1（序号为**数字**+**英文句点**+**一个空格**）
+- 项目2（使用一个减号可以自动延续上面的序号）
+- 项目3
+    1. 项目3-1
+    - 项目3-2
+    - 项目3-3
+
+---
+
+##### 无序列表：
+
+* 北京（使用缩进可以表示子列表，为了方便阅读，请尽量使用**4个空格**的缩进）
+    * 东城区
+    * 西城区
+* 南京
+    * 玄武区
+        * 新街口
+        * 孝陵卫
+            * ★您现在的位置
+    * 秦淮区
+
+---
+
+#### 代码
+
+---
+
+##### 转义
+
+转义用一个\就可以了，比如下面这样\*\*我没有加粗**。
+
+##### 一行代码：
+
+像这样`cout << "hello world!"`，用符号`（反引号，键盘上数字1左边那个键）把一行代码包围起来。
+
+##### 区块性的代码：
+
+用6个`（反引号）把代码包起来：
+
+```
+#include <iostream>
+
+void main(){
+    std::cout << "Hello，酷狗。";
+}
+```
+
+我们将自动识别你所使用的编程语言并进行高亮显示：
+
+```
+def main():
+    return "Hello, World."
+print 'Hello, Kitty.'
+```
+
+---
+
+以上。</textarea>
+    {% endif %}
+    </div>
+    <div id="preview"></div>
+</div>
+
+
+{% if settings.DEBUG %}
+<script src="{{ static_url('libs/jquery.js') }}"></script>
+<script src="{{ static_url('libs/bootstrap/bootstrap.js') }}"></script>
+{% else %}
+<script src="//lib.sinaapp.com/js/jquery/2.0.2/jquery-2.0.2.min.js"></script>
+<script src="//lib.sinaapp.com/js/bootstrap/2.3.1/js/bootstrap.min.js"></script>
+{% endif %}
+
+<script src="{{ static_url('libs/prettify/prettify.js') }}"></script>
+{% if article %}
+<script src="{{ static_url('libs/select2/select2.js') }}"></script>
+<script src="{{ static_url('libs/jquery.validate.js') }}"></script>
+<script src="{{ static_url('libs/jquery.gritter/gritter.js') }}"></script>
+{% endif %}
+<script src="{{ static_url('libs/marked.js') }}"></script>
+<script src="{{ admin_static('js/base.js') }}"></script>
+<script src="{{ admin_static('js/editor.js') }}"></script>
+</body>
+</html>

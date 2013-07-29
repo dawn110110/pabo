@@ -1,0 +1,45 @@
+{% extends 'base.html' %}
+
+
+{% block title %}{{ site_info.title }}{% endblock %}
+
+
+{% block css %}
+<link rel="stylesheet" href="{{ static_url('libs/prettify/prettify.css') }}">
+{% endblock %}
+
+
+{% block libs %}
+<script src="{{ static_url('libs/prettify/prettify.js') }}"></script>
+{% endblock %}
+
+
+{% block content %}
+<div class="container-fluid" id="home">
+    {% set num = [0] %}
+    {% for article in articles %}
+    {% do num.append(num[-1] + 1) %}
+    {% set meta = article.meta %}
+    <div class="row-fluid article">
+        <div class="span12">
+            <h3>{{ meta.title }}</h3>
+            <div class="meta">
+                <time datetime="{{ meta.datetime }}">{{ meta.datetime }}</time>
+                <p><a href="/archives/{{ article.cid }}/page/1">{{ article.cls_name }}</a></p>
+            </div>
+            <div class="content">{{ article.html }}</div>
+        </div>
+    </div>
+    {% endfor %}
+    {% set author = site_info.author %}
+    <div id="home-footer">
+        {% if num[-1] == app %}
+        <h2><a href="/page/{{ page_num + 1}}">更多</a></h2>
+        {% endif %}
+        <div class="author">
+            <p>AUTHOR &copy;{{ author.name }}</p>
+            <p>THEME BY SHUJI</p>
+        </div>
+    </div>
+</div>
+{% endblock %}

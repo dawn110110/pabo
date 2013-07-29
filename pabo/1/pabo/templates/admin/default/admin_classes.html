@@ -1,0 +1,76 @@
+{% extends 'admin_base.html' %}
+{% import 'admin_widgets.html' as widgets %}
+
+
+{% block title %}分类管理{% endblock %}
+
+
+{% block css %}
+<link rel="stylesheet" href="{{ static_url('libs/select2/select2.css') }}">
+<style>
+td input {
+    max-width: 100px;
+}
+.select2-search {
+    display: none;
+}
+</style>
+{% endblock %}
+
+
+{% block libs %}
+<script src="{{ static_url('libs/jquery.validate.js') }}"></script>
+<script src="{{ static_url('libs/jquery.datatables.js') }}"></script>
+<script src="{{ static_url('libs/select2/select2.js') }}"></script>
+{% endblock %}
+
+
+{% block js %}
+<script src="{{ admin_static('js/classes.js') }}"></script>
+{% endblock %}
+
+
+{% block content %}
+<div class="container-fluid">
+    <div class="row-fluid">
+        <div class="span12">
+            <div class="widget-box">
+                <div class="widget-title">
+                    <span class="icon"><i class="icon-plus"></i></span>
+                    <h5>添加分类</h5>
+                </div>
+                <div class="widget-content nopadding">
+                    <form action="/admin.add.cls.json" method="post" class="form-horizontal" id="form-add">
+                        <div class="control-group">
+                            <label class="control-label">分类名称</label>
+                            <div class="controls">
+                                <input type="text" name="cls" autofocus autocomplete="off">
+                            </div>
+                        </div>
+                        <div class="form-actions">
+                            <input type="submit" class="btn btn-primary" value="添加">
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row-fluid">
+        <div class="span12">
+            <div class="widget-box">
+                <div class="widget-title">
+                    <span class="icon"><i class="icon-wrench"></i></span>
+                    <h5>管理分类
+                        <span class="btn btn-mini" id="refresh">
+                            <i class="icon-refresh"></i> 刷新
+                        </span>
+                    </h5>
+                </div>
+                <div class="widget-content nopadding">
+                    {{ widgets.classes_table(classes) }}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

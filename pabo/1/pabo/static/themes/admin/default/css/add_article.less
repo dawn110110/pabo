@@ -1,0 +1,86 @@
+#dropbox{
+    position: relative;
+    min-height: 290px;
+    overflow: hidden;
+    padding-bottom: 40px;
+    .message {
+        font-size: 11px;
+        text-align: center;
+        padding-top: 140px;
+        display: block;
+        i {
+            color: #ccc;
+            font-size: 10px;
+        }
+    }
+    .preview{
+        width: 245px;
+        height: 215px;
+        float: left;
+        margin: 55px 0 0 60px;
+        position: relative;
+        text-align: center;
+        img{
+            max-width: 240px;
+            max-height: 180px;
+            border: 3px solid #fff;
+            display: block;
+            box-shadow: 0 0 2px #000;
+            -webkit-box-shadow: 0 0 2px #000;
+            -moz-box-shadow: 0 0 2px #000;
+        }
+        &.done{
+            .uploaded {
+                display: block;
+            }
+            .progress{
+                width: 100% !important;
+            }
+        }
+    }
+    .image-holder{
+        display: inline-block;
+        position: relative;
+    }
+    .uploaded{
+        position: absolute;
+        top: 0;
+        left: 0;
+        height: 100%;
+        width: 100%;
+        background: url('../img/done.png') no-repeat center center rgba(255,255,255,0.5);
+        display: none;
+    }
+    .progress-holder{
+        position: absolute;
+        background: #fff;
+        height: 20px;
+        width: 100%;
+        left: 0;
+        bottom: 0;
+        border-radius: 99px;
+
+        box-shadow: 0 0 2px #000;
+        -webkit-box-shadow: 0 0 2px #000;
+        -moz-box-shadow: 0 0 2px #000;
+        cursor: pointer;
+    }
+    .progress{
+        border-radius: 99px;
+        background: #333;
+        color: #fff;
+        position: absolute;
+        height: 100%;
+        left: 0;
+        width: 0;
+
+        box-shadow: 0 0 1px rgba(255, 255, 255, 0.4) inset;
+        -webkit-box-shadow: 0 0 1px rgba(255, 255, 255, 0.4) inset;
+        -moz-box-shadow: 0 0 1px rgba(255, 255, 255, 0.4) inset;
+
+        -moz-transition: 0.25s;
+        -webkit-transition: 0.25s;
+        -o-transition: 0.25s;
+        transition: 0.25s;
+    }
+}

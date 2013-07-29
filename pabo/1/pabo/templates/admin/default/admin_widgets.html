@@ -1,0 +1,147 @@
+{# 所有分类表格 #}
+{% macro classes_table(classes, ajax=False) %}
+{% if not ajax %}
+<table class="table table-bordered table-striped classes">
+{% endif %}
+    <thead>
+        <tr>
+            <th>序号</th>
+            <th>分类名称</th>
+            <th>包含文章数量</th>
+            <th>分类id</th>
+            <th>操作</th>
+        </tr>
+    </thead>
+    <tbody>
+    {% set idx = 1 %}
+    {% for cls in classes %}
+        <tr data-id="{{ cls.cid }}">
+            <td>{{ idx }}</td>
+            <td>{{ cls.name }}</td>
+            <td>{{ cls.num }}</td>
+            <td>{{ cls.cid }}</td>
+            <td>
+                {% if cls.cid != settings.DEFAULT_CLS %}
+                    <a class="rename" href="javascript:;">重命名</a> |
+                    <a class="del" href="javascript:;">删除</a>
+                {% endif %}
+            </td>
+        </tr>
+        {% set idx = idx + 1 %}
+    {% endfor %}
+    </tbody>
+{% if not ajax %}
+</table>
+{% endif %}
+{% endmacro %}
+
+
+{# 所有分类select控件 #}
+{% macro classes_select(classes, cid=None, ajax=False) %}
+{% set cid = settings.DEFAULT_CLS if cid == None else cid %}
+{% if not ajax %}
+<select name="cls">
+{% endif %}
+{% for cls in classes %}
+    {% set selected = ' selected="selected"' if cid == cls.cid else '' %}
+    <option{{selected}} value="{{ cls.cid }}">{{ cls.name }}</option>
+{% endfor %}
+{% if not ajax %}
+</select>
+{% endif %}
+{% endmacro %}
+
+
+{# 分页 #}
+{% macro pagination(cur_num=1, total_num=10) %}
+{% if total_num > 1 %}
+<div class="pagination alternate">
+    <ul>
+        <li class="prev{% if cur_num|int == 1 %} disabled{% endif %}"><a href="#">上一页</a></li>
+        {% for i in range(1, total_num + 1) %}
+        {% set active = ' class="active"' if i == cur_num|int else '' %}
+        <li{{ active }}><a href="#">{{ i }}</a></li>
+        {% endfor %}
+        <li class="next{% if cur_num|int == total_num|int %} disabled{% endif %}"><a href="#">下一页</a></li>
+    </ul>
+</div>
+{% endif %}
+{% endmacro %}
+
+
+{# 后台管理文章列表 #}
+{% macro manage_articles(articles, cur_num, total_num) %}
+{% if cur_num == 1 %}
+<div class="container-fluid" id="articles">
+{% endif %}
+    {% set articles = articles|list %}
+    {% set l = articles|length %}
+    {% if l == 0 %}
+    <p class="l0"><a href="/admin/article/add" class="btn btn-info">赶紧来写第一篇文章吧 <i class="icon-arrow-right"></i></a></p>
+    {% else %}
+    {% set pages = pagination(cur_num, total_num) %}
+    {{ pages }}
+    {% for i in range(0, l, 2) %}
+        <div class="row-fluid">
+            {{ box(articles[i]) }}
+            {% if i < l - 1 %}{{ box(articles[i + 1]) }}{% endif %}
+        </div>
+    {% endfor %}
+    {{ pages }}
+    {% endif %}
+{% if cur_num == 1 %}
+</div>
+{% endif %}
+{% endmacro %}
+
+
+{# 文章管理列表中一个文章框 #}
+{% macro box(article, ajax=False) %}
+{% set meta = article.meta %}
+{% if not ajax %}
+<div class="span6 article" data-id="{{ article.aid }}">
+{% endif %}
+    <div class="widget-box">
+        <div class="widget-title">
+            <span class="icon"><i class="icon-file"></i></span>
+            <h5 title="{{ meta.title }}" class="tip-right">
+                <a href="/article/admin/{{ article.aid }}">{{ meta.title|truncate(18, True) }}</a>
+            </h5>
+            <div class="buttons">
+                <a class="btn btn-mini" href="/admin/edit/article/{{ article.aid }}" target="_blank"><i class="icon-edit"></i> 修改</a>
+                <a class="btn btn-mini del"><i class="icon-trash"></i> 删除</a>
+            </div>
+        </div>
+        <div class="widget-content">
+            <p><i class="icon-time"></i> {{ meta.datetime }}</p>
+            <p><i class="icon-th-list"></i> {{ article.cls_name }}</p>
+            <hr>
+            <p>{{ article.abs }}</p>
+        </div>
+    </div>
+{% if not ajax %}
+</div>
+{% endif %}
+{% endmacro %}
+
+
+{# 图片墙 #}
+{% macro imgs_wall(imgs, ajax=False) %}
+{% if not ajax %}
+<ul class="thumbnails">
+{% endif %}
+    {% for key in imgs %}
+    <li class="span2">
+        <a target="_blank" href="/img/{{ key }}" class="thumbnail">
+            <img class="tip-top" title="点击查看大图" src="/img/160x120/{{ key }}">
+        </a>
+        <div class="center">
+            <a class="copy" title="复制网址" href="#"><i class="icon-copy icon-white"></i></a>
+            <a class="del" title="删除图片" href="#"><i class="icon-trash icon-white"></i></a>
+        </div>
+    </li>
+    {% endfor %}
+{% if not ajax %}
+</ul>
+{% endif %}
+{% endmacro %}
